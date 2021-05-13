@@ -1,0 +1,39 @@
+#https://www.portainer.io/installation/
+#docker volume create portainer-data
+#docker volume create portainer-docker-sock
+#docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer-data:/data portainer/portainer
+
+version: '3.7'
+services:
+  portainer:
+    container_name: portainer
+    image: 'portainer/portainer-ce'
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    networks:
+      docker-net1:
+        ipv4_address: "192.168.2.242"
+    ports:
+      - '8000:8000'
+      - '80:80'
+
+    volumes:
+      - 'portainer-data:/data'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+#    command:
+#      --ssl
+#      --sslcert /certs/portainer.crt
+#      --sslkey /certs/portainer.key
+
+volumes:
+  portainer-data:
+    external: true
+#  portainer-docker-sock:
+#    external: true
+
+networks:
+  default:
+    external:
+      name: docker-net1
+  docker-net1:
+    external: true
